@@ -1,0 +1,4 @@
+{
+    "mongoURI": "mongodb+srv://mj:mj@cab-booking-gzzv0.mongodb.net/<dbname>?retryWrites=true&w=majority",
+    "jwtSecret": "Token Not Found"
+}
