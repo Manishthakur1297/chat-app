@@ -8,7 +8,7 @@ const config = require('config')
 const User = require('../models/User');
 const auth = require('../middleware/auth')
 
-const { viewProfile, listUsers }  = require('../controllers/users')
+const { viewProfile, listUsers, list }  = require('../controllers/users')
 
 
 // @route       GET api/users
@@ -20,7 +20,7 @@ router.get('/me', auth, viewProfile)
 // @route       GET api/users
 // @desc        GET ALL Users
 // @access      Private
-router.get('/', auth, listUsers)
+router.get('/', auth, list)
 
 
 module.exports = router;

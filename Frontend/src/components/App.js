@@ -4,6 +4,7 @@ import Login from "./auth/login";
 import Signup from "./auth/signup";
 import './style.css'
 import User from "./users/users"
+import Chat from "./chat/chat"
 
 import { axiosInstance } from "./service/axiosApi";
 
@@ -69,7 +70,7 @@ const App = () => {
                         {/* <Route exact path={"/login/"} render={() => <Login handler = {this.handler} />}/> */}
                         <PublicRoute restricted={true} exact path={"/login/"} component={Login}/>
                         <PublicRoute restricted={true} exact path={"/signup/"} component={Signup}/>
-                        <PrivateRoute exact path={"/dashboard/"} component={User}/>
+                        <PrivateRoute exact path={"/dashboard/"} component={Chat}/>
                         <PrivateRoute exact path={"/users/"} component={User}/>
                         <PublicRoute restricted={true} path={"/"} component={Login} />
                     </Switch>

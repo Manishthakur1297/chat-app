@@ -1,3 +1,4 @@
+import { axiosInstance } from "./service/axiosApi";
 
 export const welcomeMessage = (socket) => {
     socket.on('welcomeMessage', msg =>{
@@ -6,12 +7,13 @@ export const welcomeMessage = (socket) => {
     socket.emit('message', "Message Received!");
 }
 
-export const getProducts = sortBy => {
-    return fetch(`/api/products?sortBy=${sortBy}&order=desc&limit=12`, {
-        method: "GET"
-    })
-        .then(response => {
-            return response.json();
-        })
-        .catch(err => console.log(err));
-};
+
+export const getUsers = async () => {
+    try {
+        let res = await axiosInstance.get('/users/')
+        console.log(res)
+        return res.data
+    } catch (error) {
+        throw error;
+    }
+}
