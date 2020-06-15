@@ -1,7 +1,11 @@
 const mongoose = require('mongoose');
+const Conversation = require('../models/Conversation')
+const Message = require('../models/Message')
+const User = require('../models/User')
 
 // Get conversations list
 exports.conversations = async (req, res) => {
+    console.log(req.query)
     try {
         let from = mongoose.Types.ObjectId(req.user.id);
         const conversations = await Conversation.aggregate([
@@ -43,9 +47,12 @@ exports.conversations = async (req, res) => {
 // Get messages from conversation
 // based on to & from
 exports.conversationsQuery = async (req, res) => {
+    console.log(req.query,"edded")
     try {
         let user1 = mongoose.Types.ObjectId(req.user.id);
         let user2 = mongoose.Types.ObjectId(req.query.id);
+        console.log(user1)
+        console.log(user2)
         const messages = await Message.aggregate([
             {
                 $lookup: {
@@ -79,7 +86,7 @@ exports.conversationsQuery = async (req, res) => {
                 'fromObj.date': 0,
             })
 
-            res.send(messages);
+            return res.send(messages);
         
     } catch (err) {
         console.log(err);
@@ -92,9 +99,11 @@ exports.conversationsQuery = async (req, res) => {
 
 // Post private message
 exports.privateMessage = (req, res) => {
+    console.log("hello")
     try {
         let from = mongoose.Types.ObjectId(req.user.id);
-        let to = mongoose.Types.ObjectId(req.body.to);
+        let to = mongoose.Types.ObjectId(req.body.id);
+        console.log(from,to)
     
         Conversation.findOneAndUpdate(
         {
@@ -106,7 +115,7 @@ exports.privateMessage = (req, res) => {
             },
         },
         {
-            recipients: [req.user.id, req.body.to],
+            recipients: [req.user.id, req.body.id],
             lastMessage: req.body.body,
             date: Date.now(),
         },
@@ -114,27 +123,29 @@ exports.privateMessage = (req, res) => {
         function(err, conversation) {
             if (err) {
                 console.log(err);
-                res.setHeader('Content-Type', 'application/json');
+                // res.setHeader('Content-Type', 'application/json');
                 res.end(JSON.stringify({ message: 'Failure' }));
                 res.sendStatus(500);
             } else {
                 let message = new Message({
                     conversation: conversation._id,
-                    to: req.body.to,
+                    to: req.body.id,
                     from: req.user.id,
                     body: req.body.body,
                 });
 
+                // console.log(req.io,"ehiididbihewdewieb")
                 req.io.sockets.emit('messages', req.body.body);
+                // console.log(req)
 
                 message.save(err => {
                     if (err) {
                         console.log(err);
-                        res.setHeader('Content-Type', 'application/json');
+                        // res.setHeader('Content-Type', 'application/json');
                         res.end(JSON.stringify({ message: 'Failure' }));
                         res.sendStatus(500);
                     } else {
-                        res.setHeader('Content-Type', 'application/json');
+                        // res.setHeader('Content-Type', 'application/json');
                         res.end(
                             JSON.stringify({
                                 message: 'Success',

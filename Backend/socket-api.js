@@ -18,9 +18,14 @@ const socketConnection = (io) => {
         socket.on("message", msg => {
             console.log(msg)
         })
-        socket.on("input", data => {
-            console.log(data)
-        })
+        //Someone is typing
+        socket.on("typing", data => {
+            socket.broadcast.emit("typing", {
+            data
+            });
+        });
+
+        
 
     })
 

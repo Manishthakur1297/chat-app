@@ -20,7 +20,7 @@ router.get('/conversations/query', auth, conversationsQuery)
 // @route       POST api/conversations
 // @desc        POST new conversations
 // @access      Private
-router.post('/conversations', auth, conversationsQuery)
+router.post('/conversations', auth, privateMessage)
 
 
 module.exports = router;
