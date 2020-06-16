@@ -9,7 +9,8 @@ const UserItem = ({users, userClicked, usr}) => {
     return (
         <div className="row">
             { 
-                users.map( user => {
+                users.map( (user,idx) => {
+                    
                     return <div onClick={clickItem(user)} key={user._id} className="user-item">
                         {user.name} <span style={{color:"red",fontSize:"12px"}}>{user.email===usr ? " is typing..." : ""}</span>
                         <br />
@@ -21,5 +22,11 @@ const UserItem = ({users, userClicked, usr}) => {
 
     )
 }
+
+// if(messages.length === index+1){
+//     return  <div ref={messagesEnd}>messagesComp(item)</div>    
+//  }else{
+//      messagesComp(item)
+//  }
 
 export default UserItem;

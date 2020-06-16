@@ -53,11 +53,11 @@ io.on('connection', (socket) => {
     console.log("New Broadcast Connection")
     //Someone is typing
     socket.on("typing", user => {
-        socket.broadcast.emit("typing", user);
+        socket.to(user).emit("typing", user);
     });
 
-    socket.on("stopTyping", () => {
-        socket.broadcast.emit("stopTyping")
+    socket.on("stopTyping", (user) => {
+        socket.to(user).emit("stopTyping")
     })
 })
 // Assign socket object to every request

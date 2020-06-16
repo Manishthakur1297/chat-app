@@ -6,8 +6,6 @@ import io from "socket.io-client";
 import ChatItem from './chatItem';
 import UserItem from './userItem';
 
-import { ChatList } from "react-chat-elements";
-
 import { Container, Row, Col } from  'react-bootstrap';
 
 const Chat = () => {
@@ -15,66 +13,41 @@ const Chat = () => {
   const admin = localStorage.getItem("user")
 
   const SOCKET_URI = process.env.REACT_APP_SERVER_URI;
-
   const socket = io.connect(SOCKET_URI)
 
-  const [message, setMessage] = useState("")
-
-  const [users, setUsers] = useState([])
-  const [conversations, setConversations] = useState([]);
   const [user, setUser] = useState(null)
+  const [users, setUsers] = useState([])
+  const [message, setMessage] = useState("")
+  const [conversations, setConversations] = useState([]);
 
   const [lastMessage, setLastMessage] = useState(null);
   const [typingUser, setTypingUser] = useState("");
   
   let chatBottom = useRef(null);
 
-const scrollToBottom = () => {
-  if (chatBottom && chatBottom.current) {
-      chatBottom.current.scrollIntoView({ block: 'end', behavior: 'smooth' });
-  }
-};
+  const scrollToBottom = () => {
+    if (chatBottom && chatBottom.current) {
+        chatBottom.current.scrollIntoView({ block: 'end', behavior: 'smooth' });
+    }
+  };
 
   const listUsers = () => {
     getUsers().then(data => {
         setUsers(data)
     });  
-    }
-
-  useEffect(() => {
-    // welcomeMessage(socket)
-    listUsers()
-  },[typingUser])
-
-  useEffect(() => {
-    reloadMessages()
-      scrollToBottom();
-}, [lastMessage]);
-
-useEffect(() => {
-  // const socket = io.connect((process.env.REACT_APP_API_URL);
-  socket.on('messages', data => setLastMessage(data));
-  socket.on("typing", (usr) => {
-    setTypingUser(usr)
-  })
-  socket.on("stopTyping", () => {
-    setTypingUser("")
-  })
-}, []);
-
-useEffect(scrollToBottom, [conversations]);
-
-const reloadMessages = () => {
-  if(user)
-  {
-    getConversationMessages(user._id).then((data)=>{
-      setConversations(data)
-    })
-
-  }else {
-      setConversations([]);
   }
-};
+
+  const reloadMessages = () => {
+    if(user)
+    {
+      getConversationMessages(user._id).then((data)=>{
+        setConversations(data)
+      })
+
+    }else {
+        setConversations([]);
+    }
+  };
 
   const inputChanged = event => {
     if(event.target.value.length>0)
@@ -96,6 +69,7 @@ const reloadMessages = () => {
     else{
       sendConversationMessage(user._id, msg)
       .then((res)=> {
+        socket.emit("stopTyping")
         setMessage("")
         setTypingUser("")
       })
@@ -109,6 +83,28 @@ const reloadMessages = () => {
       setConversations(data)
     })
   }
+
+  useEffect(() => {
+    // welcomeMessage(socket)
+    listUsers()
+  },[typingUser])
+
+  useEffect(() => {
+    reloadMessages()
+      scrollToBottom();
+  }, [lastMessage]);
+
+  useEffect(() => {
+    socket.on('messages', data => setLastMessage(data));
+    socket.on("typing", (usr) => {
+      setTypingUser(usr)
+    })
+    socket.on("stopTyping", () => {
+      setTypingUser("")
+    })
+  }, []);
+
+  useEffect(scrollToBottom, [conversations]);
 
     return (
 
